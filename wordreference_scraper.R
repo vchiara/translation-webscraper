@@ -1,6 +1,7 @@
 library(dplyr)
 library(rvest)
 library(stringr)
+library(purrr)
 
 translate <- function(url){
   site <- read_html(iconv(url, to = "UTF-8"), encoding = "utf8")
@@ -14,16 +15,25 @@ translate <- function(url){
     html_nodes(xpath = 'text()') %>%
     html_text()
   
-  if (length(to_word) == 1) {
-    assign("to_word", URLencode(to_word),  envir = .GlobalEnv)
-  } else {
-    assign("to_word", sapply(to_word, URLencode),  envir = .GlobalEnv)
+  if (is_empty(c(from_word, to_word))) {
+    from_word <- site %>%
+      html_nodes('#article table.WRD:first-of-type .even .FrWrd strong') %>%
+      html_text()
+    
+    to_word <- site %>% 
+      html_nodes('#article table.WRD:first-of-type .even .ToWrd') %>%
+      html_nodes(xpath = 'text()') %>%
+      html_text()
   }
   
-  if (length(from_word) == 1) {
-    assign("from_word", URLencode(from_word),  envir = .GlobalEnv)
-  } else {
+  if (length(c(to_word, from_word) > 1)) {
+    assign("to_word", sapply(to_word, URLencode),  envir = .GlobalEnv)
     assign("from_word", sapply(from_word, URLencode),  envir = .GlobalEnv)
+  } else {
+    global_to_word <- if (length(to_word) == 1) URLencode(to_word) else ''
+    assign("to_word", global_to_word,  envir = .GlobalEnv)
+    global_from_word <- if (length(from_word) == 1) URLencode(from_word) else ''
+    assign("from_word", global_from_word,  envir = .GlobalEnv)
   }
   
   language_source <- site %>%
