@@ -19,11 +19,14 @@ translate <- function(url){
     html_nodes("#articleHead > script") %>% 
     html_attr("src")
   
-  suggestions <- read_html(script) %>%
-    html_nodes("a") %>% 
-    html_attr("href")
+  if (!is_empty(script)) {
+    suggestions <- read_html(script) %>%
+      html_nodes("a") %>% 
+      html_text()
+    
     assign("suggestions", suggestions, envir = .GlobalEnv)
-
+  }
+  
   if (is_empty(c(from_word, to_word))) {
     from_word <- site %>%
       html_nodes('#article table.WRD:first-of-type .even .FrWrd strong') %>%
