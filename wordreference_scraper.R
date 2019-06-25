@@ -19,7 +19,7 @@ translate <- function(url){
     html_nodes("#articleHead > script") %>% 
     html_attr("src")
   
-  if (!is_empty(script)) {
+  if (!is.na(script)) {
     suggestions <- read_html(script) %>%
       html_nodes("a") %>% 
       html_text()
