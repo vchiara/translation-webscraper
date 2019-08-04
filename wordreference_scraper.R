@@ -18,14 +18,22 @@ get_words <- function(nodes, class){
       from <- nodes[i] %>% html_nodes('.FrWrd strong') %>% 
               html_text() %>% 
               str_remove_all("\u21D2")
+      
+      from_example <- nodes[i] %>% html_nodes(".FrEx") %>%
+                      html_text()
      
        to <- nodes[i] %>% html_nodes('.ToWrd') %>% 
               html_nodes(xpath = 'text()') %>% 
               html_text() %>%
               str_remove_all("\u21D2")
       
-      current_list$from <- c(current_list$from, from) 
+       to_example <- nodes[i] %>% html_nodes(".ToEx") %>%
+                     html_text()
+      
+      current_list$from <- c(current_list$from, from)
+      current_list$from_example <- c(current_list$from_example, from_example) 
       current_list$to <- c(current_list$to, to)
+      current_list$to_example <- c(current_list$to_example, to_example)
       
       if(i == length(nodes)){
         word_list[[length(word_list)+1]] <- current_list
