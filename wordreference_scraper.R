@@ -1,7 +1,7 @@
-library(tidyverse)
+library(dplyr)
 library(rvest)
 library(stringr)
-
+library(purrr)
 
 get_words <- function(nodes, class){
  
